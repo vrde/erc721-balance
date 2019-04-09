@@ -1,0 +1,33 @@
+{
+  "name": "erc721-balance",
+  "version": "0.0.1",
+  "description": "Get all erc721 tokens owned by an address.",
+  "main": "index.js",
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vrde/erc721-balance.git"
+  },
+  "keywords": [
+    "erc721",
+    "nft",
+    "ethereum",
+    "web3"
+  ],
+  "author": "vrde",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/vrde/erc721-balance/issues"
+  },
+  "homepage": "https://github.com/vrde/erc721-balance#readme",
+  "devDependencies": {
+    "openzeppelin-solidity": "^2.2.0",
+    "truffle": "^5.0.11"
+  },
+  "dependencies": {
+    "web3": "^1.0.0-beta.37",
+    "web3-utils": "^1.0.0-beta.37"
+  }
+}
