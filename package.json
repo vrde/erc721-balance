@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/vrde/erc721-balance#readme",
   "devDependencies": {
+    "ethnode": "0.0.11",
     "openzeppelin-solidity": "^2.2.0",
     "truffle": "^5.0.11"
   },
