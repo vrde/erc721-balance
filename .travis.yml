@@ -4,5 +4,5 @@ node_js:
 cache: npm
 before_script: npx ethnode --download
 script:
-  - npx ethnode &
+  - npx ethnode --logging warn &
   - npm test
