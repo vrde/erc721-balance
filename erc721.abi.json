@@ -21,6 +21,21 @@
   },
   {
     "constant": true,
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function",
+    "signature": "0x06fdde03"
+  },
+  {
+    "constant": true,
     "inputs": [
       {
         "name": "tokenId",
@@ -145,6 +160,21 @@
     "signature": "0x70a08231"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function",
+    "signature": "0x95d89b41"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -194,6 +224,26 @@
     "constant": true,
     "inputs": [
       {
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenURI",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function",
+    "signature": "0xc87b56dd"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
         "name": "owner",
         "type": "address"
       },
@@ -213,6 +263,22 @@
     "stateMutability": "view",
     "type": "function",
     "signature": "0xe985e9c5"
+  },
+  {
+    "inputs": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "symbol",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor",
+    "signature": "constructor"
   },
   {
     "anonymous": false,
@@ -293,6 +359,10 @@
       {
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "name": "tokenURI",
+        "type": "string"
       }
     ],
     "name": "mint",
@@ -300,6 +370,6 @@
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function",
-    "signature": "0x40c10f19"
+    "signature": "0xd3fc9864"
   }
 ]
