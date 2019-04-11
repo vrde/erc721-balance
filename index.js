@@ -99,6 +99,10 @@ async function isEnumerable(web3, contractAddress) {
   );
 }
 
+async function hasMetadata(web3, contractAddress) {
+  return await hasMethod(web3, contractAddress, "tokenURI(uint256)");
+}
+
 async function yieldTokensOfOwner(web3, contractAddress, ownerAddress) {
   const contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
   let strategy;
@@ -127,5 +131,6 @@ async function getTokensOfOwner(web3, contractAddress, ownerAddress) {
 module.exports = {
   hasMethod,
   isEnumerable,
+  hasMetadata,
   getTokensOfOwner
 };
