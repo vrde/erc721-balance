@@ -1,3 +1,4 @@
+global.fetch = require("node-fetch");
 const { sha3, padLeft } = require("web3-utils");
 const ERC721EnumerableABI = require("./erc721enumerable.abi.json");
 
@@ -53,30 +54,6 @@ async function tokensViaEnum(web3, contractAddress, ownerAddress) {
   return promises;
 }
 
-async function* tokensViaEnumBatch(web3, contractAddress, ownerAddress) {
-  const contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
-  const n = await contract.methods.balanceOf(ownerAddress).call();
-
-  let promises = {};
-  const batch = new web3.BatchRequest();
-
-  for (let i = 0; i < n; i++) {
-    promises[i] = new Promise((resolve, reject) =>
-      batch.add(
-        contract.methods
-          .tokenOfOwnerByIndex(ownerAddress, i)
-          .call.request({ from: ownerAddress }, (a, b) => resolve([i, b]))
-      )
-    );
-  }
-  batch.execute();
-  while (Object.values(promises).length) {
-    let [i, v] = await Promise.race(Object.values(promises));
-    delete promises[i];
-    yield v;
-  }
-}
-
 // From: https://ethereum.stackexchange.com/a/50091/33448
 async function hasMethod(web3, contractAddress, signature) {
   const code = await web3.eth.getCode(contractAddress);
@@ -129,7 +106,7 @@ function subscribe(web3, contractAddress, ownerAddress, wantMetadata = true) {
     const promises = await strategy(web3, contractAddress, ownerAddress);
     for (let i = 0; i < promises.length; i++) {
       if (wantMetadata) {
-        promises[i]
+        promises[i] = promises[i]
           .then(tokenId => getTokenURI(contract, tokenId))
           .then(data => getTokenMetadata(contract, data));
       }
@@ -150,8 +127,11 @@ async function getTokenURI(contract, tokenId) {
 }
 
 async function getTokenMetadata(contract, { tokenId, tokenURI }) {
+  let response;
+  let metadata;
   try {
-    let res = await fetch(tokenURI);
+    response = await fetch(tokenURI);
+    metadata = await response.json();
   } catch (error) {
     console.log(error);
     return { tokenId, tokenURI, error };
@@ -159,7 +139,7 @@ async function getTokenMetadata(contract, { tokenId, tokenURI }) {
   return {
     tokenId,
     tokenURI,
-    metadata: res.json()
+    metadata
   };
 }
 
