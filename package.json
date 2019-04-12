@@ -28,7 +28,8 @@
     "truffle": "^5.0.11"
   },
   "dependencies": {
-    "web3": "^1.0.0-beta.37",
+    "node-fetch": "^2.3.0",
+    "web3": "^1.0.0-beta.52",
     "web3-utils": "^1.0.0-beta.37"
   }
 }

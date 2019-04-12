@@ -3,8 +3,10 @@ const ERC721EnumerableABI = require("./erc721enumerable.abi.json");
 
 // Inspired by:
 // https://github.com/TimDaub/ERC721-wallet/blob/master/src/sagas/fetchTransactions.js
-async function* tokensViaEvents(web3, contractAddress, ownerAddress) {
-  contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
+async function tokensViaEvents(web3, contractAddress, ownerAddress) {
+  const contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
+  const promises = [];
+
   const outputs = await contract.getPastEvents("Transfer", {
     fromBlock: 0,
     toBlock: "latest",
@@ -34,34 +36,25 @@ async function* tokensViaEvents(web3, contractAddress, ownerAddress) {
       }
     }
   }
-  for (let i = 0; i < inputs.length; i++) {
-    yield inputs[i].returnValues.tokenId;
-  }
+
+  return inputs.map(
+    i => new Promise(resolve => resolve(i.returnValues.tokenId))
+  );
 }
 
-async function* tokensViaEnum(web3, contractAddress, ownerAddress) {
-  contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
-  const n = await contract.methods.balanceOf(ownerAddress).call();
+async function tokensViaEnum(web3, contractAddress, ownerAddress) {
+  const contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
+  const total = await contract.methods.balanceOf(ownerAddress).call();
+  const promises = [];
 
-  let promises = {};
-
-  for (let i = 0; i < n; i++) {
-    promises[i] = new Promise((resolve, reject) =>
-      contract.methods
-        .tokenOfOwnerByIndex(ownerAddress, i)
-        .call()
-        .then(r => resolve([i, r]))
-    );
+  for (let i = 0; i < total; i++) {
+    promises.push(contract.methods.tokenOfOwnerByIndex(ownerAddress, i).call());
   }
-  while (Object.values(promises).length) {
-    let [i, v] = await Promise.race(Object.values(promises));
-    delete promises[i];
-    yield v;
-  }
+  return promises;
 }
 
 async function* tokensViaEnumBatch(web3, contractAddress, ownerAddress) {
-  contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
+  const contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
   const n = await contract.methods.balanceOf(ownerAddress).call();
 
   let promises = {};
@@ -103,34 +96,98 @@ async function hasMetadata(web3, contractAddress) {
   return await hasMethod(web3, contractAddress, "tokenURI(uint256)");
 }
 
-async function yieldTokensOfOwner(web3, contractAddress, ownerAddress) {
+function subscribe(web3, contractAddress, ownerAddress, wantMetadata = true) {
   const contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
-  let strategy;
-  if (await isEnumerable(web3, contractAddress)) {
-    strategy = tokensViaEnum;
-  } else {
-    strategy = tokensViaEvents;
+  const funcs = {};
+  const onAddCallbacks = [];
+  const onRemoveCallbacks = [];
+  const listen = true;
+
+  function onAdd(callback) {
+    onAddCallbacks.push(callback);
+    return funcs;
   }
-  return strategy(web3, contractAddress, ownerAddress);
+
+  function onRemove(callback) {
+    onRemoveCallbacks.push(callback);
+    return funcs;
+  }
+
+  function unsubscribe() {
+    listen = false;
+  }
+
+  funcs.onAdd = onAdd;
+  funcs.onRemove = onRemove;
+  funcs.unsubscribe = unsubscribe;
+
+  setTimeout(async () => {
+    const strategy = (await isEnumerable(web3, contractAddress))
+      ? tokensViaEnum
+      : tokensViaEvents;
+
+    const promises = await strategy(web3, contractAddress, ownerAddress);
+    for (let i = 0; i < promises.length; i++) {
+      if (wantMetadata) {
+        promises[i]
+          .then(tokenId => getTokenURI(contract, tokenId))
+          .then(data => getTokenMetadata(contract, data));
+      }
+      promises[i].then(value =>
+        onAddCallbacks.map(callback => callback(value))
+      );
+    }
+  });
+  return funcs;
 }
 
-async function getTokensOfOwner(web3, contractAddress, ownerAddress) {
-  const gen = await yieldTokensOfOwner(web3, contractAddress, ownerAddress);
+async function getTokenURI(contract, tokenId) {
+  const tokenURI = await contract.methods.tokenURI(tokenId).call();
+  return {
+    tokenId,
+    tokenURI
+  };
+}
+
+async function getTokenMetadata(contract, { tokenId, tokenURI }) {
+  try {
+    let res = await fetch(tokenURI);
+  } catch (error) {
+    console.log(error);
+    return { tokenId, tokenURI, error };
+  }
+  return {
+    tokenId,
+    tokenURI,
+    metadata: res.json()
+  };
+}
+
+async function getTokensOfOwner(
+  web3,
+  contractAddress,
+  ownerAddress,
+  wantMetadata = true
+) {
+  const contract = new web3.eth.Contract(ERC721EnumerableABI, contractAddress);
+  const total = await contract.methods.balanceOf(ownerAddress).call();
   const tokens = [];
 
-  while (true) {
-    let { value, done } = await gen.next();
-    if (done) {
-      break;
-    }
-    tokens.push(value);
-  }
-  return tokens;
+  return new Promise((resolve, reject) => {
+    const s = subscribe(web3, contractAddress, ownerAddress, wantMetadata);
+    s.onAdd(token => {
+      tokens.push(token);
+      if (tokens.length == total) {
+        resolve(tokens);
+      }
+    });
+  });
 }
 
 module.exports = {
   hasMethod,
   isEnumerable,
   hasMetadata,
+  subscribe,
   getTokensOfOwner
 };
