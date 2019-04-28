@@ -1,12 +1,6 @@
 const { dispatch } = require("./plugins");
 const ERC721ABI = require("./abis/erc721.abi.json");
 
-/*
-async function hasMetadata(web3, contractAddress) {
-  return await hasMethod(web3, contractAddress, "tokenURI(uint256)");
-}
-*/
-
 function subscribe(web3, contractAddress, ownerAddress, wantMetadata = true) {
   const contract = new web3.eth.Contract(ERC721ABI, contractAddress);
   const funcs = {};
