@@ -52,14 +52,17 @@ async function getTokensOfOwner(
   wantMetadata = true
 ) {
   const contract = new web3.eth.Contract(ERC721ABI, contractAddress);
-  const total = await contract.methods.balanceOf(ownerAddress).call();
+  const total = parseInt(await contract.methods.balanceOf(ownerAddress).call(), 10);
   const tokens = [];
 
   return new Promise((resolve, reject) => {
+    if (total === 0) {
+      resolve([]);
+    }
     const s = subscribe(web3, contractAddress, ownerAddress, wantMetadata);
     s.onAdd(token => {
       tokens.push(token);
-      if (tokens.length == total) {
+      if (tokens.length === total) {
         resolve(tokens);
       }
     });
