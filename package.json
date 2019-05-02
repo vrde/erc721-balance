@@ -1,6 +1,6 @@
 {
   "name": "erc721-balance",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Get all erc721 tokens owned by an address.",
   "main": "index.js",
   "scripts": {
