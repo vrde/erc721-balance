@@ -1,7 +1,7 @@
 language: node_js
 node_js:
   - 10
-cache: npm
+# cache: npm
 before_script: npx ethnode --download
 script:
   - npx ethnode --logging warn &
