@@ -2,7 +2,8 @@ language: node_js
 node_js:
   - 10
 # cache: npm
-before_script: npx ethnode --download
-script:
+before_script:
+  - npx ethnode --download
   - npx ethnode --logging warn &
+script:
   - npm test
