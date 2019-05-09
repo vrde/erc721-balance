@@ -4,7 +4,7 @@
   "description": "Get all erc721 tokens owned by an address.",
   "main": "index.js",
   "scripts": {
-    "test": "truffle test"
+    "test": "ethnode -e 'truffle test'"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/vrde/erc721-balance#readme",
   "devDependencies": {
-    "ethnode": "0.0.14",
+    "ethnode": "0.0.17",
     "fetch-mock": "^7.3.1",
     "openzeppelin-solidity": "^2.2.0",
     "truffle": "^5.0.11"
