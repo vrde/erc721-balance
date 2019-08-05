@@ -1,5 +1,5 @@
 const Web3 = require("web3");
-const { getTokensOfOwner } = require("../");
+const { getTokensOfOwner } = require("../lib");
 
 describe("CryptoKitties", () => {
   it("getTokensOfOwner", async () => {

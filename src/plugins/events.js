@@ -1,6 +1,6 @@
 const { sha3, padLeft } = require("web3-utils");
 const { getTokenURI, getTokenURIAndMetadata } = require("./common");
-const ERC721ABI = require("../abis/erc721.abi.json");
+const ERC721ABI = require("../../abis/erc721.abi.json");
 
 function match(web3, contractAddress) {
   return true;

@@ -1,5 +1,5 @@
-const { dispatch } = require("./plugins");
-const ERC721ABI = require("./abis/erc721.abi.json");
+import { dispatch } from "./plugins";
+import ERC721ABI from "../abis/erc721.abi.json";
 
 function subscribe(web3, contractAddress, ownerAddress, wantMetadata = true) {
   const contract = new web3.eth.Contract(ERC721ABI, contractAddress);
@@ -52,7 +52,10 @@ async function getTokensOfOwner(
   wantMetadata = true
 ) {
   const contract = new web3.eth.Contract(ERC721ABI, contractAddress);
-  const total = parseInt(await contract.methods.balanceOf(ownerAddress).call(), 10);
+  const total = parseInt(
+    await contract.methods.balanceOf(ownerAddress).call(),
+    10
+  );
   const tokens = [];
 
   return new Promise((resolve, reject) => {
@@ -69,7 +72,7 @@ async function getTokensOfOwner(
   });
 }
 
-module.exports = {
+export default {
   // hasMetadata,
   subscribe,
   getTokensOfOwner

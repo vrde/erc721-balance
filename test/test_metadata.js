@@ -1,5 +1,5 @@
 const fetchMock = require("fetch-mock");
-const { getTokensOfOwner } = require("../");
+const { getTokensOfOwner } = require("../lib");
 const generate = require("./generate");
 const MyERC721 = artifacts.require("MyERC721");
 const MyERC721Enumerable = artifacts.require("MyERC721Enumerable");

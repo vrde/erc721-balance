@@ -1,6 +1,6 @@
 {
   "name": "erc721-balance",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Get all erc721 tokens owned by an address.",
   "main": "index.js",
   "scripts": {
@@ -26,11 +26,16 @@
     "ethnode": "0.0.17",
     "fetch-mock": "^7.3.1",
     "openzeppelin-solidity": "^2.2.0",
-    "truffle": "^5.0.11"
+    "truffle": "^5.0.11",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
+    "@types/node-fetch": "^2.5.0",
+    "@types/web3": "^1.0.19",
     "node-fetch": "^2.3.0",
-    "web3": "^1.0.0-beta.52",
-    "web3-utils": "^1.0.0-beta.52"
+    "web3": "^1.2.0",
+    "web3-eth-contract": "^1.2.0",
+    "web3-utils": "^1.2.0"
   }
 }

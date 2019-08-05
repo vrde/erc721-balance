@@ -1,4 +1,4 @@
-const { hasMethod } = require("../plugins/utils");
+const { hasMethod } = require("../lib/plugins/utils");
 const MyERC721 = artifacts.require("MyERC721");
 const MyERC721Enumerable = artifacts.require("MyERC721Enumerable");
 

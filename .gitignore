@@ -1,6 +1,9 @@
 # Truffle builds
 build
 
+# TypeScript builds
+lib
+
 # Logs
 logs
 *.log
