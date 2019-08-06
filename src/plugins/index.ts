@@ -1,25 +1,38 @@
 import Web3 from "web3";
 
-import cryptokitties from "./cryptokitties";
-import mlb from "./mlb";
-import events from "./events";
-import enumerable from "./enumerable";
+import * as cryptokitties from "./cryptokitties";
+import * as mlb from "./mlb";
+import * as events from "./events";
+import * as enumerable from "./enumerable";
+import { IToken } from "./common";
+import Contract from "web3/eth/contract";
 
-const routes = [cryptokitties, mlb, enumerable, events];
+const strategies = [cryptokitties, mlb, enumerable, events];
 
-async function dispatch(web3: Web3, contractAddress: string) {
+interface IStrategy {
+  getTokens(
+    web3: Web3,
+    contractAddress: string,
+    ownerAddress: string
+  ): Promise<Promise<IToken>[]>;
+  getTokenMetadata(contract: Contract, token: IToken): Promise<IToken>;
+}
+
+export async function dispatch(
+  web3: Web3,
+  contractAddress: string
+): Promise<IStrategy> {
   let i: number;
-  for (i = 0; i < routes.length; i++) {
-    if (await routes[i].match(web3, contractAddress)) {
+  for (i = 0; i < strategies.length; i++) {
+    if (await strategies[i].match(web3, contractAddress)) {
       break;
     }
   }
-  if (routes[i] === undefined) {
+  if (strategies[i] === undefined) {
     throw new Error("Cannot dispatch request");
   }
-  return routes[i];
+  return {
+    getTokens: strategies[i].getTokens,
+    getTokenMetadata: strategies[i].getTokenMetadata
+  };
 }
-
-export default {
-  dispatch
-};
