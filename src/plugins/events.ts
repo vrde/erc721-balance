@@ -1,14 +1,20 @@
-const { sha3, padLeft } = require("web3-utils");
-const { getTokenURI, getTokenURIAndMetadata } = require("./common");
-const ERC721ABI = require("../../abis/erc721.abi.json");
+import Web3 from "web3";
+import { getTokenURI, getTokenURIAndMetadata, IToken } from "./common";
+import ERC721ABI from "../../abis/erc721.abi.json";
 
-function match(web3, contractAddress) {
+export function match(web3: Web3, contractAddress: string) {
   return true;
 }
 
+const { sha3, padLeft } = Web3.utils;
+
 // Inspired by:
 // https://github.com/TimDaub/ERC721-wallet/blob/master/src/sagas/fetchTransactions.js
-async function getTokens(web3, contractAddress, ownerAddress) {
+export async function getTokens(
+  web3: Web3,
+  contractAddress: string,
+  ownerAddress: string
+): Promise<Promise<IToken>[]> {
   const contract = new web3.eth.Contract(ERC721ABI, contractAddress);
   const promises = [];
 
@@ -17,8 +23,8 @@ async function getTokens(web3, contractAddress, ownerAddress) {
     toBlock: "latest",
     topics: [
       sha3("Transfer(address,address,uint256)"),
-      padLeft(ownerAddress, 64),
-      null
+      padLeft(ownerAddress, 64, "0"),
+      ""
     ]
   });
 
@@ -27,8 +33,8 @@ async function getTokens(web3, contractAddress, ownerAddress) {
     toBlock: "latest",
     topics: [
       sha3("Transfer(address,address,uint256)"),
-      null,
-      padLeft(ownerAddress, 64)
+      "",
+      padLeft(ownerAddress, 64, "0")
     ]
   });
 
@@ -43,12 +49,9 @@ async function getTokens(web3, contractAddress, ownerAddress) {
   }
 
   return inputs.map(
-    input => new Promise(resolve => resolve(input.returnValues.tokenId))
+    input =>
+      new Promise(resolve => resolve({ tokenId: input.returnValues.tokenId }))
   );
 }
 
-module.exports = {
-  match,
-  getTokens,
-  getTokenMetadata: getTokenURIAndMetadata
-};
+export const getTokenMetadata = getTokenURIAndMetadata;

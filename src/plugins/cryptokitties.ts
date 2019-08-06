@@ -13,8 +13,7 @@ export async function match(
 export async function getTokens(
   web3: Web3,
   contractAddress: string,
-  ownerAddress: string,
-  wantMetadata: boolean = true
+  ownerAddress: string
 ): Promise<Promise<IToken>[]> {
   let response;
   let tokens;
@@ -36,16 +35,9 @@ export async function getTokenMetadata(
   _: Contract,
   token: IToken
 ): Promise<IToken> {
-  let response;
-  let metadata;
-  try {
-    // pls change this asap
-    response = await fetch(token.tokenURI || "");
-    metadata = await response.json();
-  } catch (error) {
-    console.log(error);
-    return { ...token, error };
-  }
+  // pls change this asap
+  const response = await fetch(token.tokenURI || "");
+  const metadata = await response.json();
   return {
     ...token,
     metadata: {
