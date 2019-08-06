@@ -7,13 +7,16 @@ module.exports = function(deployer) {
   deployer
     .deploy(MyERC721, "test", "TEST")
     .then(() =>
-      writeFileSync("./erc721.abi.json", JSON.stringify(MyERC721.abi, null, 2))
+      writeFileSync(
+        "./src/abis/erc721.abi.json",
+        JSON.stringify(MyERC721.abi, null, 2)
+      )
     );
   deployer
     .deploy(MyERC721Enumerable, "test", "TEST")
     .then(() =>
       writeFileSync(
-        "./erc721enumerable.abi.json",
+        "./src/abis/erc721enumerable.abi.json",
         JSON.stringify(MyERC721Enumerable.abi, null, 2)
       )
     );

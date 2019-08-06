@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { getTokenURI, getTokenURIAndMetadata, IToken } from "./common";
-import ERC721ABI from "../../abis/erc721.abi.json";
+import ERC721ABI from "./../abis/erc721.abi.json";
 
 export function match(web3: Web3, contractAddress: string) {
   return true;
@@ -21,22 +21,21 @@ export async function getTokens(
   const outputs = await contract.getPastEvents("Transfer", {
     fromBlock: 0,
     toBlock: "latest",
-    topics: [
-      sha3("Transfer(address,address,uint256)"),
-      padLeft(ownerAddress, 64, "0"),
-      ""
-    ]
+    filter: {
+      from: padLeft(ownerAddress, 40, "0")
+    }
   });
+  console.log(outputs);
 
   const inputs = await contract.getPastEvents("Transfer", {
     fromBlock: 0,
     toBlock: "latest",
-    topics: [
-      sha3("Transfer(address,address,uint256)"),
-      "",
-      padLeft(ownerAddress, 64, "0")
-    ]
+    filter: {
+      to: padLeft(ownerAddress, 40, "0")
+    }
   });
+
+  console.log(inputs);
 
   for (let i = 0; i < outputs.length; i++) {
     const outputTokenId = outputs[i].returnValues.tokenId;
@@ -47,7 +46,6 @@ export async function getTokens(
       }
     }
   }
-
   return inputs.map(
     input =>
       new Promise(resolve => resolve({ tokenId: input.returnValues.tokenId }))

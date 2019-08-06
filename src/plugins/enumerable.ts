@@ -3,7 +3,7 @@ import { IToken } from "./common";
 
 import { hasMethod } from "./utils";
 import { getTokenURIAndMetadata } from "./common";
-import ERC721EnumerableABI from "../../abis/erc721enumerable.abi.json";
+import ERC721EnumerableABI from "./../abis/erc721enumerable.abi.json";
 
 export async function match(web3: Web3, contractAddress: string) {
   return await hasMethod(

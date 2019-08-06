@@ -20,12 +20,9 @@ contract("ERC721", async accounts => {
     }
 
     assert.deepEqual(
-      (await getTokensOfOwner(
-        web3,
-        myERC721.address,
-        accounts[0],
-        false
-      )).sort(),
+      (await getTokensOfOwner(web3, myERC721.address, accounts[0], false))
+        .map(t => t.tokenId)
+        .sort(),
       ownerToTokens[accounts[0]]
     );
   });
@@ -59,7 +56,9 @@ contract("ERC721Enumerable", async accounts => {
         myERC721Enumerable.address,
         accounts[0],
         false
-      )).sort(),
+      ))
+        .map(t => t.tokenId)
+        .sort(),
       ownerToTokens[accounts[0]]
     );
   });

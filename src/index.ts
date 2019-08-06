@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { dispatch } from "./plugins";
-import ERC721ABI from "../abis/erc721.abi.json";
+import ERC721ABI from "./abis/erc721.abi.json";
 import { IToken } from "./plugins/common";
 import { UnderscoreStatic } from "underscore";
 
@@ -57,7 +57,7 @@ export function subscribe(
       if (wantMetadata) {
         promises[i] = promises[i].then(getTokenMetadata.bind(null, contract));
       }
-      promises[i].then(tokenEmitter.dispatchAdd);
+      promises[i].then(tokenEmitter.dispatchAdd.bind(tokenEmitter));
     }
   }, 0);
   return tokenEmitter;
